@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Kurs nomi</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -242,14 +241,9 @@
         </form>
 
         <div class="result" id="result" hidden>
-          <h3>Deyarli tayyor</h3>
-          <p>Telegramni ochib, tayyor xabarni yuboring. Shundan keyin arizangiz bizga yetib boradi.</p>
-          <pre id="msgText"></pre>
-          <div class="acts">
-            <a class="btn" id="tgLink" href="#" target="_blank" rel="noopener">Telegramda yuborish</a>
-            <button class="btn ghost" id="copyBtn" type="button">Matnni nusxalash</button>
-          </div>
-          <p id="copyNote" aria-live="polite"></p>
+          <h3 id="resultTitle">Deyarli tayyor</h3>
+          <p id="resultText"></p>
+          <div class="acts"><a class="btn" id="tgLink" href="#" target="_blank" rel="noopener">Telegramda yozish</a></div>
         </div>
       </div>
     </div>
@@ -264,14 +258,35 @@
 </footer>
 
 <script>
-  // Telegram foydalanuvchi nomingizni shu yerga yozing (@ belgisiz).
+  // 1) Telegram foydalanuvchi nomingiz (@ belgisiz).
   var TG_USERNAME = "kurs_admin";
+  // 2) Google Form havolasi (.../formResponse bilan tugaydi) va savollar kodlari.
+  //    FORM_URL bo'sh qoldirilsa, ariza faqat Telegram orqali ketadi.
+  var FORM_URL = "";
+  var ENTRY = {
+    parent: "entry.1111111111",
+    child: "entry.2222222222",
+    age: "entry.3333333333",
+    phone: "entry.4444444444"
+  };
 
   var form = document.getElementById("regForm");
   var err = document.getElementById("err");
   var result = document.getElementById("result");
+  var submitBtn = form.querySelector("button[type=submit]");
   var tgBase = "https://t.me/" + TG_USERNAME;
   document.getElementById("footTg").href = tgBase;
+
+  function showResult(saved, text) {
+    document.getElementById("resultTitle").textContent = saved ? "Arizangiz qabul qilindi" : "Deyarli tayyor";
+    document.getElementById("resultText").textContent = saved
+      ? "Ma'lumotlaringiz bizga yetdi. Tezroq javob olish uchun Telegramda ham yozib qo'ying."
+      : "Telegramni ochib, tayyor xabarni yuboring. Shundan keyin arizangiz bizga yetib boradi.";
+    document.getElementById("tgLink").href = tgBase + "?text=" + encodeURIComponent(text);
+    form.hidden = true;
+    result.hidden = false;
+    result.scrollIntoView({ block: "center" });
+  }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -294,26 +309,19 @@
       "Ota-ona: " + v.parent + "\n" +
       "Bola: " + v.child + " (" + v.age + " yosh)\n" +
       "Telefon: " + v.phone;
-    document.getElementById("msgText").textContent = text;
-    document.getElementById("tgLink").href = tgBase + "?text=" + encodeURIComponent(text);
-    form.hidden = true;
-    result.hidden = false;
-    result.scrollIntoView({ block: "center" });
-  });
 
-  document.getElementById("copyBtn").addEventListener("click", function () {
-    var note = document.getElementById("copyNote");
-    var text = document.getElementById("msgText").textContent;
-    function fallback() {
-      var r = document.createRange();
-      r.selectNodeContents(document.getElementById("msgText"));
-      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-      note.textContent = "Matn belgilandi, nusxalab oling.";
-    }
-    try {
-      navigator.clipboard.writeText(text).then(function () { note.textContent = "Nusxalandi."; }, fallback);
-    } catch (x) { fallback(); }
+    if (!FORM_URL) { showResult(false, text); return; }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Yuborilmoqda...";
+    var body = new URLSearchParams();
+    for (var k in ENTRY) body.append(ENTRY[k], v[k]);
+    fetch(FORM_URL, { method: "POST", mode: "no-cors", body: body }).then(function () {
+      showResult(true, text);
+    }).catch(function () {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Ro'yxatdan o'tish";
+      err.textContent = "Yuborib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.";
+    });
   });
 </script>
-
-</body></html>
