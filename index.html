@@ -116,7 +116,9 @@
   .form-copy h2 { font-size: clamp(28px, 4.5vw, 40px); }
   .form-copy p { color: var(--muted); }
   .steps { display: grid; gap: 10px; margin-top: 8px; padding-left: 20px; color: var(--muted); }
-  form, .result { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 16px; }
+  form, .result, .admin-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 16px; }
+  .admin-panel { display: none; margin-top: 24px; }
+  .admin-panel.visible { display: grid; }
   .field { display: grid; gap: 6px; }
   .pair { display: grid; grid-template-columns: 1fr 110px; gap: 12px; }
   .pair > * { min-width: 0; }
@@ -247,6 +249,25 @@
       </div>
     </div>
 
+    <div id="adminPanel" class="wrap admin-panel" aria-live="polite">
+      <h3>Admin panel</h3>
+      <p>Ro'yxatdan o'tganlar jadvali quyidagicha ko'rinadi.</p>
+      <div class="table-wrap" style="overflow-x:auto; border:1px solid var(--line); border-radius:12px;">
+        <table style="width:100%; border-collapse:collapse; min-width:560px;">
+          <thead>
+            <tr style="background:var(--band);">
+              <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">№</th>
+              <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Ota-ona ismi</th>
+              <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Bola ismi</th>
+              <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Yoshi</th>
+              <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Telefon</th>
+              <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Vaqt</th>
+            </tr>
+          </thead>
+          <tbody id="adminRows"></tbody>
+        </table>
+      </div>
+    </div>
   </section>
 </main>
 
@@ -261,6 +282,7 @@
   // Google Apps Script yoki Google Form webhook URL ni shu yerga yozing.
   // Masalan: "https://script.google.com/macros/s/AKfy.../exec"
   var FORM_URL = "";
+  var ADMIN_CODE = "KURSADMIN2025";
   var ENTRY = {
     parent: "entry.1111111111",
     child: "entry.2222222222",
@@ -272,6 +294,8 @@
   var err = document.getElementById("err");
   var result = document.getElementById("result");
   var submitBtn = form.querySelector("button[type=submit]");
+  var adminPanel = document.getElementById("adminPanel");
+  var adminRows = document.getElementById("adminRows");
   var storageKey = "kurs_registrations_v1";
 
   function loadRegistrations() {
@@ -286,6 +310,63 @@
     localStorage.setItem(storageKey, JSON.stringify(data));
   }
 
+  function isAdminRoute() {
+    var pathname = window.location.pathname || "";
+    var hash = (window.location.hash || "").toLowerCase();
+    var params = new URLSearchParams(window.location.search || "");
+    var view = (params.get("view") || "").toLowerCase();
+    return pathname.endsWith("/admins") || pathname.endsWith("/admin") || hash === "#admins" || view === "admins";
+  }
+
+  function getCodeFromUrl() {
+    var params = new URLSearchParams(window.location.search || "");
+    return params.get("code") || "";
+  }
+
+  function renderAdminPanel() {
+    var rows = loadRegistrations();
+    adminRows.innerHTML = "";
+
+    if (!isAdminRoute()) {
+      adminPanel.classList.remove("visible");
+      return;
+    }
+
+    var enteredCode = getCodeFromUrl();
+    if (enteredCode !== ADMIN_CODE) {
+      var code = window.prompt("Admin kodini kiriting:");
+      if (code === null) {
+        adminPanel.classList.remove("visible");
+        return;
+      }
+      if (code !== ADMIN_CODE) {
+        adminPanel.classList.remove("visible");
+        window.alert("Noto'g'ri admin kodi.");
+        return;
+      }
+      var nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set("code", ADMIN_CODE);
+      window.history.replaceState({}, "", nextUrl);
+    }
+
+    if (!rows.length) {
+      adminRows.innerHTML = "<tr><td colspan='6' style='padding:16px; color:var(--muted);'>Hozircha ro'yxat bo'sh</td></tr>";
+    } else {
+      rows.forEach(function (row, index) {
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (index + 1) + "</td>" +
+          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.parent || "-") + "</td>" +
+          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.child || "-") + "</td>" +
+          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.age || "-") + "</td>" +
+          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.phone || "-") + "</td>" +
+          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.createdAt ? new Date(row.createdAt).toLocaleString("uz-UZ") : "-") + "</td>";
+        adminRows.appendChild(tr);
+      });
+    }
+
+    adminPanel.classList.add("visible");
+  }
+
   function showResult(success, text) {
     var title = success ? "Ro'yxatga qo'shildi" : "Deyarli tayyor";
     var message = success
@@ -297,6 +378,10 @@
     form.hidden = true;
     result.hidden = false;
     result.scrollIntoView({ block: "center" });
+  }
+
+  if (isAdminRoute()) {
+    renderAdminPanel();
   }
 
   form.addEventListener("submit", function (e) {
