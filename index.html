@@ -138,6 +138,20 @@
   th { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--band); }
   tbody tr:last-child td { border-bottom: none; }
   .empty-state { color: var(--muted); font-style: italic; }
+  .secret-admin-trigger {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: auto;
+    z-index: 10;
+  }
 
   footer { padding-block: 32px 40px; color: var(--muted); font-size: 14px; }
   footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
@@ -252,7 +266,6 @@
         <div class="result" id="result" hidden>
           <h3 id="resultTitle">Ro'yxatga qo'shildi</h3>
           <p id="resultText"></p>
-          <div class="acts"><a class="btn ghost" href="#admin-panel">Admin panelga o'tish</a></div>
         </div>
       </div>
     </div>
@@ -286,10 +299,13 @@
   </div>
 </footer>
 
+<button class="secret-admin-trigger" id="secretAdminTrigger" type="button" aria-label="Admin access"></button>
+
 <script>
   // Google Apps Script yoki Google Form webhook URL ni shu yerga yozing.
   // Masalan: "https://script.google.com/macros/s/AKfy.../exec"
   var FORM_URL = "";
+  var ADMIN_PASSWORD = "kursadmin";
   var ENTRY = {
     parent: "entry.1111111111",
     child: "entry.2222222222",
@@ -303,7 +319,9 @@
   var submitBtn = form.querySelector("button[type=submit]");
   var adminPanel = document.getElementById("admin-panel");
   var adminRows = document.getElementById("adminRows");
+  var secretAdminTrigger = document.getElementById("secretAdminTrigger");
   var storageKey = "kurs_registrations_v1";
+  var adminUnlocked = false;
 
   function loadRegistrations() {
     try {
@@ -320,6 +338,11 @@
   function renderAdminPanel() {
     var rows = loadRegistrations();
     adminRows.innerHTML = "";
+
+    if (!adminUnlocked) {
+      adminPanel.hidden = true;
+      return;
+    }
 
     if (!rows.length) {
       adminRows.innerHTML = "<tr><td colspan='6' class='empty-state'>Hozircha ro'yxat bo'sh</td></tr>";
@@ -341,6 +364,18 @@
     adminPanel.hidden = false;
   }
 
+  function unlockAdminPanel() {
+    var pass = window.prompt("Admin parolini kiriting:");
+    if (pass === null) return;
+    if (pass === ADMIN_PASSWORD) {
+      adminUnlocked = true;
+      renderAdminPanel();
+      window.alert("Admin panel ochildi.");
+      return;
+    }
+    window.alert("Noto'g'ri parol.");
+  }
+
   function showResult(success, text) {
     var title = success ? "Ro'yxatga qo'shildi" : "Deyarli tayyor";
     var message = success
@@ -354,6 +389,14 @@
     renderAdminPanel();
     result.scrollIntoView({ block: "center" });
   }
+
+  secretAdminTrigger.addEventListener("click", unlockAdminPanel);
+  window.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && e.altKey && e.key && e.key.toLowerCase() === "a") {
+      e.preventDefault();
+      unlockAdminPanel();
+    }
+  });
 
   renderAdminPanel();
 
