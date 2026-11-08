@@ -257,10 +257,15 @@
     </div>
 
     <div id="adminPanel" class="wrap admin-panel" aria-live="polite">
-      <h3>Admin panel</h3>
-      <p>Ro'yxatdan o'tganlar jadvali quyidagicha ko'rinadi.</p>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <div>
+          <h3>Admin panel</h3>
+          <p>Ro'yxatdan o'tganlar jadvali quyidagicha ko'rinadi.</p>
+        </div>
+        <button id="clearAllBtn" type="button" class="btn ghost" style="padding:10px 16px;">Barchasini o'chirish</button>
+      </div>
       <div class="table-wrap" style="overflow-x:auto; border:1px solid var(--line); border-radius:12px;">
-        <table style="width:100%; border-collapse:collapse; min-width:560px;">
+        <table style="width:100%; border-collapse:collapse; min-width:620px;">
           <thead>
             <tr style="background:var(--band);">
               <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">№</th>
@@ -269,6 +274,7 @@
               <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Yoshi</th>
               <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Telefon</th>
               <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Vaqt</th>
+              <th style="padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);">Amal</th>
             </tr>
           </thead>
           <tbody id="adminRows"></tbody>
@@ -303,6 +309,7 @@
   var submitBtn = form.querySelector("button[type=submit]");
   var adminPanel = document.getElementById("adminPanel");
   var adminRows = document.getElementById("adminRows");
+  var clearAllBtn = document.getElementById("clearAllBtn");
   var storageKey = "kurs_registrations_v1";
 
   function loadRegistrations() {
@@ -332,6 +339,21 @@
     return params.get("code") || "";
   }
 
+  function clearAllRegistrations() {
+    if (!confirm("Barcha ro'yxatdan o'tganlar o'chirilsinmi?")) {
+      return;
+    }
+    saveRegistrations([]);
+    renderAdminPanel();
+  }
+
+  function deleteRegistration(index) {
+    var rows = loadRegistrations();
+    rows.splice(index, 1);
+    saveRegistrations(rows);
+    renderAdminPanel();
+  }
+
   function renderAdminPanel() {
     var rows = loadRegistrations();
     adminRows.innerHTML = "";
@@ -359,7 +381,7 @@
     }
 
     if (!rows.length) {
-      adminRows.innerHTML = "<tr><td colspan='6' style='padding:16px; color:var(--muted);'>Hozircha ro'yxat bo'sh</td></tr>";
+      adminRows.innerHTML = "<tr><td colspan='7' style='padding:16px; color:var(--muted);'>Hozircha ro'yxat bo'sh</td></tr>";
     } else {
       rows.forEach(function (row, index) {
         var tr = document.createElement("tr");
@@ -377,6 +399,18 @@
           td.textContent = String(value);
           tr.appendChild(td);
         });
+
+        var actionCell = document.createElement("td");
+        actionCell.style.cssText = "padding:12px 14px; border-bottom:1px solid var(--line);";
+        var deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.textContent = "O'chirish";
+        deleteBtn.style.cssText = "padding:8px 12px; border:1px solid var(--danger); background:transparent; color:var(--danger); border-radius:8px; cursor:pointer;";
+        deleteBtn.addEventListener("click", function () {
+          deleteRegistration(index);
+        });
+        actionCell.appendChild(deleteBtn);
+        tr.appendChild(actionCell);
         adminRows.appendChild(tr);
       });
     }
@@ -395,6 +429,10 @@
     form.hidden = true;
     result.hidden = false;
     result.scrollIntoView({ block: "center" });
+  }
+
+  if (clearAllBtn) {
+    clearAllBtn.addEventListener("click", clearAllRegistrations);
   }
 
   if (isAdminRoute()) {
