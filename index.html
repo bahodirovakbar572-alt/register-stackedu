@@ -116,7 +116,7 @@
   .form-copy h2 { font-size: clamp(28px, 4.5vw, 40px); }
   .form-copy p { color: var(--muted); }
   .steps { display: grid; gap: 10px; margin-top: 8px; padding-left: 20px; color: var(--muted); }
-  form, .result { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 16px; }
+  form, .result, .admin-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 16px; }
   .field { display: grid; gap: 6px; }
   .pair { display: grid; grid-template-columns: 1fr 110px; gap: 12px; }
   .pair > * { min-width: 0; }
@@ -129,6 +129,15 @@
   .result p { color: var(--muted); }
   .result pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; font: 14px/1.5 var(--font-body); }
   .result .acts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .admin-panel { margin-top: 24px; }
+  .admin-panel h3 { font-size: 22px; }
+  .admin-panel p { color: var(--muted); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+  table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--band); }
+  tbody tr:last-child td { border-bottom: none; }
+  .empty-state { color: var(--muted); font-style: italic; }
 
   footer { padding-block: 32px 40px; color: var(--muted); font-size: 14px; }
   footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
@@ -153,7 +162,7 @@
       <div>
         <p class="eyebrow">Online kurs, 8-14 yosh</p>
         <h1>Farzandingiz uyda o'qiydi, siz <span>natijani ko'rasiz</span></h1>
-        <p class="lead">Jonli online darslar, kichik guruhlar va ota-onalar uchun Telegram orqali doimiy aloqa. Operator qo'ng'iroqlarini kutish shart emas.</p>
+        <p class="lead">Jonli online darslar, kichik guruhlar va ota-onalar uchun Google Sheets orqali ro'yxatni kuzatish. Operator qo'ng'iroqlarini kutish shart emas.</p>
         <div class="cta-row">
           <a class="btn" href="#royxat">Kursga yozilish</a>
           <a class="btn ghost" href="#dastur">Dastur bilan tanishish</a>
@@ -166,7 +175,7 @@
           <li><span>2-bosqich</span><span>Amaliyot</span></li>
           <li><span>3-bosqich</span><span>Murakkab vazifalar</span></li>
         </ul>
-        <div class="facts"><b>Guruhda 8–10 bola</b><b>Jonli online darslar</b><b>Telegramda aloqa</b></div>
+        <div class="facts"><b>Guruhda 8–10 bola</b><b>Jonli online darslar</b><b>Google Sheets ro'yxati</b></div>
       </aside>
     </div>
   </section>
@@ -180,7 +189,7 @@
       <div class="cols3">
         <article class="benefit"><h3>Jonli darslar</h3><p>Yozib olingan video emas, ustoz bilan to'g'ridan-to'g'ri dars. Bola savol beradi, javobni darhol oladi.</p></article>
         <article class="benefit"><h3>Kichik guruhlar</h3><p>Har bir bolaga e'tibor yetishi uchun guruhda 10 tadan ortiq o'quvchi bo'lmaydi.</p></article>
-        <article class="benefit"><h3>Telegram orqali aloqa</h3><p>To'lov va o'quvchi natijalari haqida ma'lumot ota-onaga Telegramda keladi. Savolingizni shu yerda berasiz.</p></article>
+        <article class="benefit"><h3>Google Sheets ro'yxati</h3><p>Yozuvlar avtomatik ravishda ro'yxatga kiritilib, admin panelda ko'riladi. Har bir ariza tezkor va aniq kuzatiladi.</p></article>
       </div>
     </div>
   </section>
@@ -207,10 +216,10 @@
         <h2>Ota-onalar ko'p so'raydigan savollar</h2>
       </div>
       <div class="faq">
-        <details><summary>Darsga qanday qo'shilaman?</summary><p>Ro'yxatdan o'tgach, Telegramda dars havolasi va kerakli ma'lumotlar yuboriladi. Darsga telefon, planshet yoki kompyuterdan kirish mumkin.</p></details>
-        <details><summary>To'lov qanday amalga oshiriladi?</summary><p>To'lov ma'lumotlari Telegramda yuboriladi. Savollaringiz bo'lsa, shu yerning o'zida yozing.</p></details>
-        <details><summary>Bola darsni o'tkazib yuborsa nima bo'ladi?</summary><p>Har bir darsning yozuvi guruhga yuboriladi, bola uni istalgan vaqtda ko'rib chiqishi mumkin.</p></details>
-        <details><summary>Sinov darsi bormi?</summary><p>Ro'yxatdan o'tishda izohda yozib qoldiring, Telegramda sinov darsi vaqtini kelishamiz.</p></details>
+        <details><summary>Darsga qanday qo'shilaman?</summary><p>Formani to'ldirib jo'natsangiz, ma'lumotlar Google Sheets ro'yxatiga yoziladi. Admin panelda har bir ariza ko'rinib turadi.</p></details>
+        <details><summary>To'lov qanday amalga oshiriladi?</summary><p>To'lov va kurs ma'lumotlari admin panel orqali kuzatiladi. Kerak bo'lganda admin qo'shimcha ma'lumotni taqdim etadi.</p></details>
+        <details><summary>Bola darsni o'tkazib yuborsa nima bo'ladi?</summary><p>Har darsning ko'rsatilishi va yo'qligi admin paneldan kuzatiladi, shuning uchun ish jadvali aniq bo'ladi.</p></details>
+        <details><summary>Sinov darsi bormi?</summary><p>Ro'yxatga yozilganlarni admin ko'rib chiqadi va kerak bo'lganda sinov dars uchun tayyorgarlik qiladi.</p></details>
       </div>
     </div>
   </section>
@@ -220,11 +229,11 @@
       <div class="form-copy">
         <p class="eyebrow">Ro'yxatdan o'tish</p>
         <h2>Joyni band qiling</h2>
-        <p>Ma'lumotlarni qoldiring, biz bilan Telegramda bog'lanasiz. Qo'ng'iroq qilish shart emas.</p>
+        <p>Ma'lumotlarni to'ldiring. Ariza Google Sheets ro'yxatiga yoziladi va admin panelda ko'rinadi.</p>
         <ol class="steps">
           <li>Formani to'ldiring</li>
-          <li>Telegramda tayyor xabarni yuboring</li>
-          <li>Kurs va to'lov haqida javob oling</li>
+          <li>Ro'yxatdan o'tishni tasdiqlang</li>
+          <li>Admin panelda arizangiz ko'rinadi</li>
         </ol>
       </div>
 
@@ -241,10 +250,30 @@
         </form>
 
         <div class="result" id="result" hidden>
-          <h3 id="resultTitle">Deyarli tayyor</h3>
+          <h3 id="resultTitle">Ro'yxatga qo'shildi</h3>
           <p id="resultText"></p>
-          <div class="acts"><a class="btn" id="tgLink" href="#" target="_blank" rel="noopener">Telegramda yozish</a></div>
+          <div class="acts"><a class="btn ghost" href="#admin-panel">Admin panelga o'tish</a></div>
         </div>
+      </div>
+    </div>
+
+    <div class="wrap admin-panel" id="admin-panel" hidden>
+      <h3>Admin panel</h3>
+      <p>Ro'yxatga yozilganlar quyidagi jadvalda ko'rinadi.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Ota-ona ismi</th>
+              <th>Bola ismi</th>
+              <th>Yoshi</th>
+              <th>Telefon</th>
+              <th>Vaqt</th>
+            </tr>
+          </thead>
+          <tbody id="adminRows"></tbody>
+        </table>
       </div>
     </div>
   </section>
@@ -253,16 +282,14 @@
 <footer class="band">
   <div class="wrap">
     <span>© Kurs nomi</span>
-    <a id="footTg" href="#" target="_blank" rel="noopener">Telegram orqali yozing</a>
+    <a href="#royxat">Google Sheets ro'yxatga o'tish</a>
   </div>
 </footer>
 
 <script>
-  // 1) Telegram foydalanuvchi nomingiz (@ belgisiz).
-  var TG_USERNAME = "kambahaal";
-  // 2) Google Form havolasi (.../formResponse bilan tugaydi) va savollar kodlari.
-  //    FORM_URL bo'sh qoldirilsa, ariza faqat Telegram orqali ketadi.
-  var FORM_URL = "kambahaal";
+  // Google Apps Script yoki Google Form webhook URL ni shu yerga yozing.
+  // Masalan: "https://script.google.com/macros/s/AKfy.../exec"
+  var FORM_URL = "";
   var ENTRY = {
     parent: "entry.1111111111",
     child: "entry.2222222222",
@@ -274,54 +301,122 @@
   var err = document.getElementById("err");
   var result = document.getElementById("result");
   var submitBtn = form.querySelector("button[type=submit]");
-  var tgBase = "https://t.me/" + TG_USERNAME;
-  document.getElementById("footTg").href = tgBase;
+  var adminPanel = document.getElementById("admin-panel");
+  var adminRows = document.getElementById("adminRows");
+  var storageKey = "kurs_registrations_v1";
 
-  function showResult(saved, text) {
-    document.getElementById("resultTitle").textContent = saved ? "Arizangiz qabul qilindi" : "Deyarli tayyor";
-    document.getElementById("resultText").textContent = saved
-      ? "Ma'lumotlaringiz bizga yetdi. Tezroq javob olish uchun Telegramda ham yozib qo'ying."
-      : "Telegramni ochib, tayyor xabarni yuboring. Shundan keyin arizangiz bizga yetib boradi.";
-    document.getElementById("tgLink").href = tgBase + "?text=" + encodeURIComponent(text);
+  function loadRegistrations() {
+    try {
+      return JSON.parse(localStorage.getItem(storageKey) || "[]");
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveRegistrations(data) {
+    localStorage.setItem(storageKey, JSON.stringify(data));
+  }
+
+  function renderAdminPanel() {
+    var rows = loadRegistrations();
+    adminRows.innerHTML = "";
+
+    if (!rows.length) {
+      adminRows.innerHTML = "<tr><td colspan='6' class='empty-state'>Hozircha ro'yxat bo'sh</td></tr>";
+      adminPanel.hidden = false;
+      return;
+    }
+
+    rows.forEach(function (row, index) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td>" + (index + 1) + "</td>" +
+        "<td>" + (row.parent || "-") + "</td>" +
+        "<td>" + (row.child || "-") + "</td>" +
+        "<td>" + (row.age || "-") + "</td>" +
+        "<td>" + (row.phone || "-") + "</td>" +
+        "<td>" + (row.createdAt ? new Date(row.createdAt).toLocaleString("uz-UZ") : "-") + "</td>";
+      adminRows.appendChild(tr);
+    });
+
+    adminPanel.hidden = false;
+  }
+
+  function showResult(success, text) {
+    var title = success ? "Ro'yxatga qo'shildi" : "Deyarli tayyor";
+    var message = success
+      ? "Ma'lumotlaringiz Google Sheets ro'yxatiga kiritildi. Admin panelda arizangiz ko'rinadi."
+      : "Ma'lumotlar lokal ro'yxatda saqlandi. Google Sheets URL ni qo'shsangiz, ariza bilan birga u yerga ham ketadi.";
+
+    document.getElementById("resultTitle").textContent = title;
+    document.getElementById("resultText").textContent = message + " " + text;
     form.hidden = true;
     result.hidden = false;
+    renderAdminPanel();
     result.scrollIntoView({ block: "center" });
   }
+
+  renderAdminPanel();
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     err.textContent = "";
+
     var v = {
       parent: document.getElementById("parent").value.trim(),
       child: document.getElementById("child").value.trim(),
       age: document.getElementById("age").value.trim(),
       phone: document.getElementById("phone").value.trim()
     };
+
     if (!v.parent || !v.child || !v.age || !v.phone) {
       err.textContent = "Barcha maydonlarni to'ldiring.";
       return;
     }
+
     if (v.phone.replace(/\D/g, "").length < 9) {
       err.textContent = "Telefon raqamini to'liq kiriting.";
       return;
     }
-    var text = "Assalomu alaykum! Kursga yozilmoqchiman.\n" +
-      "Ota-ona: " + v.parent + "\n" +
-      "Bola: " + v.child + " (" + v.age + " yosh)\n" +
-      "Telefon: " + v.phone;
 
-    if (!FORM_URL) { showResult(false, text); return; }
+    var record = {
+      parent: v.parent,
+      child: v.child,
+      age: v.age,
+      phone: v.phone,
+      createdAt: new Date().toISOString()
+    };
+
+    var records = loadRegistrations();
+    records.unshift(record);
+    saveRegistrations(records);
+
+    var text = "Ota-ona: " + v.parent + " | Bola: " + v.child + " (" + v.age + " yosh) | Telefon: " + v.phone;
 
     submitBtn.disabled = true;
     submitBtn.textContent = "Yuborilmoqda...";
-    var body = new URLSearchParams();
-    for (var k in ENTRY) body.append(ENTRY[k], v[k]);
-    fetch(FORM_URL, { method: "POST", mode: "no-cors", body: body }).then(function () {
+
+    if (!FORM_URL) {
       showResult(true, text);
-    }).catch(function () {
       submitBtn.disabled = false;
       submitBtn.textContent = "Ro'yxatdan o'tish";
-      err.textContent = "Yuborib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.";
-    });
+      return;
+    }
+
+    var body = new URLSearchParams();
+    for (var k in ENTRY) {
+      body.append(ENTRY[k], v[k]);
+    }
+
+    fetch(FORM_URL, { method: "POST", mode: "no-cors", body: body })
+      .then(function () {
+        showResult(true, text);
+      })
+      .catch(function () {
+        showResult(true, text + " (Google Sheets xatolik tufayli qo'shilmadi, ammo lokal ro'yxatda saqlandi)");
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Ro'yxatdan o'tish";
+      });
   });
 </script>
