@@ -341,12 +341,14 @@
 
     if (!adminUnlocked) {
       adminPanel.hidden = true;
+      adminPanel.style.display = "none";
       return;
     }
 
     if (!rows.length) {
       adminRows.innerHTML = "<tr><td colspan='6' class='empty-state'>Hozircha ro'yxat bo'sh</td></tr>";
       adminPanel.hidden = false;
+      adminPanel.style.display = "grid";
       return;
     }
 
@@ -362,6 +364,7 @@
     });
 
     adminPanel.hidden = false;
+    adminPanel.style.display = "grid";
   }
 
   function unlockAdminPanel() {
