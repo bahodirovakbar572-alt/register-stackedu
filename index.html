@@ -116,7 +116,7 @@
   .form-copy h2 { font-size: clamp(28px, 4.5vw, 40px); }
   .form-copy p { color: var(--muted); }
   .steps { display: grid; gap: 10px; margin-top: 8px; padding-left: 20px; color: var(--muted); }
-  form, .result, .admin-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 16px; }
+  form, .result { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 16px; }
   .field { display: grid; gap: 6px; }
   .pair { display: grid; grid-template-columns: 1fr 110px; gap: 12px; }
   .pair > * { min-width: 0; }
@@ -129,29 +129,6 @@
   .result p { color: var(--muted); }
   .result pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; font: 14px/1.5 var(--font-body); }
   .result .acts { display: flex; flex-wrap: wrap; gap: 10px; }
-  .admin-panel { margin-top: 24px; }
-  .admin-panel h3 { font-size: 22px; }
-  .admin-panel p { color: var(--muted); }
-  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
-  table { width: 100%; border-collapse: collapse; min-width: 560px; }
-  th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-  th { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--band); }
-  tbody tr:last-child td { border-bottom: none; }
-  .empty-state { color: var(--muted); font-style: italic; }
-  .secret-admin-trigger {
-    position: fixed;
-    left: 10px;
-    bottom: 10px;
-    width: 16px;
-    height: 16px;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    cursor: pointer;
-    opacity: 0;
-    pointer-events: auto;
-    z-index: 10;
-  }
 
   footer { padding-block: 32px 40px; color: var(--muted); font-size: 14px; }
   footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
@@ -230,10 +207,10 @@
         <h2>Ota-onalar ko'p so'raydigan savollar</h2>
       </div>
       <div class="faq">
-        <details><summary>Darsga qanday qo'shilaman?</summary><p>Formani to'ldirib jo'natsangiz, ma'lumotlar Google Sheets ro'yxatiga yoziladi. Admin panelda har bir ariza ko'rinib turadi.</p></details>
-        <details><summary>To'lov qanday amalga oshiriladi?</summary><p>To'lov va kurs ma'lumotlari admin panel orqali kuzatiladi. Kerak bo'lganda admin qo'shimcha ma'lumotni taqdim etadi.</p></details>
-        <details><summary>Bola darsni o'tkazib yuborsa nima bo'ladi?</summary><p>Har darsning ko'rsatilishi va yo'qligi admin paneldan kuzatiladi, shuning uchun ish jadvali aniq bo'ladi.</p></details>
-        <details><summary>Sinov darsi bormi?</summary><p>Ro'yxatga yozilganlarni admin ko'rib chiqadi va kerak bo'lganda sinov dars uchun tayyorgarlik qiladi.</p></details>
+        <details><summary>Darsga qanday qo'shilaman?</summary><p>Formani to'ldirib jo'natsangiz, ma'lumotlar Google Sheets ro'yxatiga yoziladi. Keyinchalik ro'yxatdan o'tganlar ro'yxati bilan tanishishingiz mumkin.</p></details>
+        <details><summary>To'lov qanday amalga oshiriladi?</summary><p>To'lov va kurs ma'lumotlari haqidagi ma'lumotlar kurs rahbariyati tomonidan ko'rib chiqiladi. Kerak bo'lganda qo'shimcha ma'lumot beriladi.</p></details>
+        <details><summary>Bola darsni o'tkazib yuborsa nima bo'ladi?</summary><p>Har darsning ko'rsatilishi va yo'qligi kurs jadvalida kuzatiladi, shuning uchun ish jarayoni aniq bo'ladi.</p></details>
+        <details><summary>Sinov darsi bormi?</summary><p>Ro'yxatga yozilganlar ko'rib chiqiladi va kerak bo'lganda sinov dars uchun tayyorgarlik qilinadi.</p></details>
       </div>
     </div>
   </section>
@@ -243,11 +220,11 @@
       <div class="form-copy">
         <p class="eyebrow">Ro'yxatdan o'tish</p>
         <h2>Joyni band qiling</h2>
-        <p>Ma'lumotlarni to'ldiring. Ariza Google Sheets ro'yxatiga yoziladi va admin panelda ko'rinadi.</p>
+        <p>Ma'lumotlarni to'ldiring. Ariza Google Sheets ro'yxatiga yoziladi va keyinchalik ro'yxatda ko'rinadi.</p>
         <ol class="steps">
           <li>Formani to'ldiring</li>
           <li>Ro'yxatdan o'tishni tasdiqlang</li>
-          <li>Admin panelda arizangiz ko'rinadi</li>
+          <li>Ma'lumotlar ro'yxatga kiritiladi</li>
         </ol>
       </div>
 
@@ -270,25 +247,6 @@
       </div>
     </div>
 
-    <div class="wrap admin-panel" id="admin-panel" hidden>
-      <h3>Admin panel</h3>
-      <p>Ro'yxatga yozilganlar quyidagi jadvalda ko'rinadi.</p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Ota-ona ismi</th>
-              <th>Bola ismi</th>
-              <th>Yoshi</th>
-              <th>Telefon</th>
-              <th>Vaqt</th>
-            </tr>
-          </thead>
-          <tbody id="adminRows"></tbody>
-        </table>
-      </div>
-    </div>
   </section>
 </main>
 
@@ -299,13 +257,10 @@
   </div>
 </footer>
 
-<button class="secret-admin-trigger" id="secretAdminTrigger" type="button" aria-label="Admin access"></button>
-
 <script>
   // Google Apps Script yoki Google Form webhook URL ni shu yerga yozing.
   // Masalan: "https://script.google.com/macros/s/AKfy.../exec"
   var FORM_URL = "";
-  var ADMIN_PASSWORD = "kursadmin";
   var ENTRY = {
     parent: "entry.1111111111",
     child: "entry.2222222222",
@@ -317,11 +272,7 @@
   var err = document.getElementById("err");
   var result = document.getElementById("result");
   var submitBtn = form.querySelector("button[type=submit]");
-  var adminPanel = document.getElementById("admin-panel");
-  var adminRows = document.getElementById("adminRows");
-  var secretAdminTrigger = document.getElementById("secretAdminTrigger");
   var storageKey = "kurs_registrations_v1";
-  var adminUnlocked = false;
 
   function loadRegistrations() {
     try {
@@ -335,73 +286,18 @@
     localStorage.setItem(storageKey, JSON.stringify(data));
   }
 
-  function renderAdminPanel() {
-    var rows = loadRegistrations();
-    adminRows.innerHTML = "";
-
-    if (!adminUnlocked) {
-      adminPanel.hidden = true;
-      adminPanel.style.display = "none";
-      return;
-    }
-
-    if (!rows.length) {
-      adminRows.innerHTML = "<tr><td colspan='6' class='empty-state'>Hozircha ro'yxat bo'sh</td></tr>";
-      adminPanel.hidden = false;
-      adminPanel.style.display = "grid";
-      return;
-    }
-
-    rows.forEach(function (row, index) {
-      var tr = document.createElement("tr");
-      tr.innerHTML = "<td>" + (index + 1) + "</td>" +
-        "<td>" + (row.parent || "-") + "</td>" +
-        "<td>" + (row.child || "-") + "</td>" +
-        "<td>" + (row.age || "-") + "</td>" +
-        "<td>" + (row.phone || "-") + "</td>" +
-        "<td>" + (row.createdAt ? new Date(row.createdAt).toLocaleString("uz-UZ") : "-") + "</td>";
-      adminRows.appendChild(tr);
-    });
-
-    adminPanel.hidden = false;
-    adminPanel.style.display = "grid";
-  }
-
-  function unlockAdminPanel() {
-    var pass = window.prompt("Admin parolini kiriting:");
-    if (pass === null) return;
-    if (pass === ADMIN_PASSWORD) {
-      adminUnlocked = true;
-      renderAdminPanel();
-      window.alert("Admin panel ochildi.");
-      return;
-    }
-    window.alert("Noto'g'ri parol.");
-  }
-
   function showResult(success, text) {
     var title = success ? "Ro'yxatga qo'shildi" : "Deyarli tayyor";
     var message = success
-      ? "Ma'lumotlaringiz Google Sheets ro'yxatiga kiritildi. Admin panelda arizangiz ko'rinadi."
+      ? "Ma'lumotlaringiz Google Sheets ro'yxatiga kiritildi."
       : "Ma'lumotlar lokal ro'yxatda saqlandi. Google Sheets URL ni qo'shsangiz, ariza bilan birga u yerga ham ketadi.";
 
     document.getElementById("resultTitle").textContent = title;
     document.getElementById("resultText").textContent = message + " " + text;
     form.hidden = true;
     result.hidden = false;
-    renderAdminPanel();
     result.scrollIntoView({ block: "center" });
   }
-
-  secretAdminTrigger.addEventListener("click", unlockAdminPanel);
-  window.addEventListener("keydown", function (e) {
-    if (e.ctrlKey && e.altKey && e.key && e.key.toLowerCase() === "a") {
-      e.preventDefault();
-      unlockAdminPanel();
-    }
-  });
-
-  renderAdminPanel();
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
