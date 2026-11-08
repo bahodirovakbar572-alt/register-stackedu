@@ -1,5 +1,9 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kurs nomi</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
@@ -33,6 +37,7 @@
   }
 
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html { scroll-behavior: smooth; }
   body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6; }
   h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
@@ -143,6 +148,8 @@
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
+</head>
+<body>
 
 <header class="wrap top">
   <a class="logo" href="#top"><i></i>Kurs nomi</a>
@@ -150,7 +157,7 @@
 </header>
 
 <main id="top">
-  <section class="hero" style="padding-top:40px">
+  <section class="hero">
     <div class="wrap hero-grid">
       <div>
         <p class="eyebrow">Online kurs, 8-14 yosh</p>
@@ -235,7 +242,7 @@
           <div class="field"><label for="parent">Ota-ona ismi</label><input id="parent" autocomplete="name" placeholder="Masalan, Dilnoza"></div>
           <div class="pair">
             <div class="field"><label for="child">Bola ismi</label><input id="child" placeholder="Ism va familiya"></div>
-            <div class="field"><label for="age">Yoshi</label><input id="age" type="number" min="3" max="25" inputmode="numeric"></div>
+            <div class="field"><label for="age">Yoshi</label><input id="age" type="number" min="8" max="14" inputmode="numeric"></div>
           </div>
           <div class="field"><label for="phone">Telefon raqami</label><input id="phone" type="tel" autocomplete="tel" placeholder="+998 90 123 45 67"></div>
           <p class="error" id="err" role="alert"></p>
@@ -274,7 +281,7 @@
 <footer class="band">
   <div class="wrap">
     <span>© Kurs nomi</span>
-    <a href="#royxat">Google Sheets ro'yxatga o'tish</a>
+    <a href="#royxat">Ro'yxatdan o'tish</a>
   </div>
 </footer>
 
@@ -307,7 +314,9 @@
   }
 
   function saveRegistrations(data) {
-    localStorage.setItem(storageKey, JSON.stringify(data));
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    } catch (e) {}
   }
 
   function isAdminRoute() {
@@ -354,12 +363,20 @@
     } else {
       rows.forEach(function (row, index) {
         var tr = document.createElement("tr");
-        tr.innerHTML = "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (index + 1) + "</td>" +
-          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.parent || "-") + "</td>" +
-          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.child || "-") + "</td>" +
-          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.age || "-") + "</td>" +
-          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.phone || "-") + "</td>" +
-          "<td style='padding:12px 14px; border-bottom:1px solid var(--line);'>" + (row.createdAt ? new Date(row.createdAt).toLocaleString("uz-UZ") : "-") + "</td>";
+        var cells = [
+          index + 1,
+          row.parent || "-",
+          row.child || "-",
+          row.age || "-",
+          row.phone || "-",
+          row.createdAt ? new Date(row.createdAt).toLocaleString("uz-UZ") : "-"
+        ];
+        cells.forEach(function (value) {
+          var td = document.createElement("td");
+          td.style.cssText = "padding:12px 14px; border-bottom:1px solid var(--line);";
+          td.textContent = String(value);
+          tr.appendChild(td);
+        });
         adminRows.appendChild(tr);
       });
     }
@@ -400,8 +417,15 @@
       return;
     }
 
-    if (v.phone.replace(/\D/g, "").length < 9) {
-      err.textContent = "Telefon raqamini to'liq kiriting.";
+    var ageNum = parseInt(v.age, 10);
+    if (isNaN(ageNum) || ageNum < 8 || ageNum > 14) {
+      err.textContent = "Kurs 8 yoshdan 14 yoshgacha bo'lgan bolalar uchun.";
+      return;
+    }
+
+    var digits = v.phone.replace(/\D/g, "");
+    if (!(digits.length === 9 || (digits.length === 12 && digits.indexOf("998") === 0))) {
+      err.textContent = "Telefon raqamini to'liq kiriting, masalan: +998 90 123 45 67.";
       return;
     }
 
@@ -423,7 +447,7 @@
     submitBtn.textContent = "Yuborilmoqda...";
 
     if (!FORM_URL) {
-      showResult(true, text);
+      showResult(false, text);
       submitBtn.disabled = false;
       submitBtn.textContent = "Ro'yxatdan o'tish";
       return;
@@ -447,3 +471,5 @@
       });
   });
 </script>
+</body>
+</html>
